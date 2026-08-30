@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from huggingface_hub import InferenceClient
 import os
+import base64
 
 app = Flask(__name__)
 CORS(app)
@@ -16,7 +17,8 @@ client = InferenceClient(
     provider="auto"
 )
 
-MODEL = "Qwen/Qwen2.5-Coder-7B-Instruct"
+# Modelo multimodal: texto + imágenes
+MODEL = "Qwen/Qwen2.5-VL-7B-Instruct"
 
 
 @app.route("/")
@@ -26,39 +28,82 @@ def home():
 
 @app.route("/chat", methods=["POST"])
 def chat():
+
     try:
+
         data = request.get_json()
 
-        if not data or "message" not in data:
+        if not data:
             return jsonify({
-                "error": "Falta el mensaje"
+                "error": "No se recibieron datos"
             }), 400
 
-        message = data["message"].strip()
+        message = data.get("message", "").strip()
+        image = data.get("image")
 
-        if not message:
+        if not message and not image:
             return jsonify({
-                "error": "El mensaje está vacío"
+                "error": "Debes enviar un mensaje o una imagen"
             }), 400
+
+        system_message = (
+            "Eres JonisAI, un asistente inteligente especializado "
+            "en programación, tecnología y solución de problemas. "
+            "Explica de forma clara, sencilla y paso a paso. "
+            "Puedes analizar imágenes cuando el usuario las envíe. "
+            "Si aparece código, errores o capturas de pantalla, "
+            "analízalos y explica cómo solucionarlos."
+        )
+
+        # ==========================================
+        # MENSAJE DEL USUARIO
+        # ==========================================
+
+        content = []
+
+        if message:
+
+            content.append({
+                "type": "text",
+                "text": message
+            })
+
+        # ==========================================
+        # IMAGEN
+        # ==========================================
+
+        if image:
+
+            # La imagen llega como:
+            # data:image/jpeg;base64,XXXXX
+
+            content.append({
+                "type": "image_url",
+                "image_url": {
+                    "url": image
+                }
+            })
+
+        # ==========================================
+        # CONSULTA AL MODELO
+        # ==========================================
 
         completion = client.chat.completions.create(
+
             model=MODEL,
+
             messages=[
                 {
                     "role": "system",
-                    "content": (
-                        "Eres JonisAI, un asistente especializado en "
-                        "programación. Explica código de forma clara, "
-                        "sencilla y paso a paso. Cuando escribas código, "
-                        "utiliza bloques de código apropiados."
-                    )
+                    "content": system_message
                 },
                 {
                     "role": "user",
-                    "content": message
+                    "content": content
                 }
             ],
-            max_tokens=500,
+
+            max_tokens=700,
             temperature=0.7
         )
 
@@ -69,6 +114,7 @@ def chat():
         }), 200
 
     except Exception as e:
+
         print("ERROR EN /chat:", repr(e))
 
         return jsonify({
@@ -78,7 +124,13 @@ def chat():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
+
+    port = int(
+        os.environ.get(
+            "PORT",
+            10000
+        )
+    )
 
     app.run(
         host="0.0.0.0",
