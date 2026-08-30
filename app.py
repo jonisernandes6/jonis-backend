@@ -18,7 +18,7 @@ client = InferenceClient(
 )
 
 # Modelo multimodal: texto + imágenes
-MODEL = "Qwen/Qwen2.5-VL-7B-Instruct"
+MODEL = "Qwen/Qwen2.5-VL-3B-Instruct"
 
 
 @app.route("/")
