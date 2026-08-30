@@ -27,7 +27,7 @@ client = InferenceClient(
 # MODELO
 # ==========================================
 
-MODEL = "Qwen/Qwen2.5-VL-3B-Instruct"
+MODEL = "Qwen/Qwen2.5-Coder-7B-Instruct"
 
 
 # ==========================================
