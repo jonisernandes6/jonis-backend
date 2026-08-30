@@ -76,31 +76,6 @@ def home():
 
     return "JonisAI Backend funcionando"
 
-@app.route("/models", methods=["GET"])
-def models():
-    try:
-        models = client.list_deployed_models()
-
-        resultado = []
-
-        for model in models:
-            resultado.append({
-                "id": model.id,
-                "provider": getattr(model, "provider", None)
-            })
-
-        return jsonify({
-            "models": resultado
-        }), 200
-
-    except Exception as e:
-        print("ERROR EN /models:", repr(e))
-
-        return jsonify({
-            "error": "No se pudieron consultar los modelos",
-            "details": str(e)
-        }), 500
-
 
 # ==========================================
 # CHAT
