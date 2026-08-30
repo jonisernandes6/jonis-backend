@@ -16,7 +16,7 @@ client = InferenceClient(
     provider="auto"
 )
 
-MODEL = "Qwen/Qwen2.5-Coder-1.5B-Instruct"
+model="Qwen/Qwen2.5-Coder-7B-Instruct"
 
 
 @app.route("/")
