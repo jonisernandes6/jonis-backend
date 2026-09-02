@@ -2,3 +2,4 @@ Flask
 flask-cors
 huggingface_hub
 gunicorn
+groq

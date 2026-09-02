@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from huggingface_hub import InferenceClient
+from groq import Groq
 import sqlite3
 import os
 from datetime import datetime
@@ -10,32 +10,31 @@ CORS(app)
 
 DB_PATH = os.environ.get("DATABASE_PATH", "jonisai.db")
 
-HF_TOKEN = os.environ.get("HUGGINGFACE_API_KEY")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
-if not HF_TOKEN:
-    raise RuntimeError("Falta HUGGINGFACE_API_KEY en Render")
+if not GROQ_API_KEY:
+    raise RuntimeError("Falta GROQ_API_KEY en Render")
 
-client = InferenceClient(
-    api_key=HF_TOKEN,
-    provider="auto"
+client = Groq(
+    api_key=GROQ_API_KEY
 )
 
 MODELS = {
-    "qwen-coder": {
-        "id": "Qwen/Qwen2.5-Coder-7B-Instruct",
-        "name": "💻 Qwen Coder"
-    },
-    "qwen": {
-        "id": "Qwen/Qwen2.5-7B-Instruct",
-        "name": "🧠 Qwen"
+    "gpt-oss-20b": {
+        "id": "openai/gpt-oss-20b",
+        "name": "🤖 GPT-OSS 20B"
     },
     "llama": {
-        "id": "meta-llama/Llama-3.1-8B-Instruct",
-        "name": "🦙 Llama 3.1"
+        "id": "llama-3.1-8b-instant",
+        "name": "🦙 Llama 3.1 8B"
+    },
+    "qwen": {
+        "id": "qwen/qwen3.6-27b",
+        "name": "🧠 Qwen 3.6 27B"
     }
 }
 
-DEFAULT_MODEL = "qwen-coder"
+DEFAULT_MODEL = "gpt-oss-20b"
 
 SYSTEM_MESSAGE = """
 Eres JonisAI, un asistente virtual inteligente y conversacional.
@@ -646,7 +645,7 @@ def chat():
         )
 
         # =====================================
-        # CONSULTAR HUGGING FACE
+        # CONSULTAR GROQ
         # =====================================
 
         completion = client.chat.completions.create(
