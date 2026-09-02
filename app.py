@@ -686,7 +686,21 @@ def chat():
             r"<think>.*?</think>",
             "",
             response_text,
-            flags=re.DOTALL
+            flags=re.DOTALL | re.IGNORECASE
+        )
+
+        response_text = re.sub(
+            r"<analysis>.*?</analysis>",
+            "",
+            response_text,
+            flags=re.DOTALL | re.IGNORECASE
+        )
+
+        response_text = re.sub(
+            r"<reasoning>.*?</reasoning>",
+            "",
+            response_text,
+            flags=re.DOTALL | re.IGNORECASE
         ).strip()
 
         if not response_text:
