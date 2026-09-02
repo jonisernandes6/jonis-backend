@@ -4,6 +4,7 @@ from groq import Groq
 import sqlite3
 import os
 from datetime import datetime
+import re
 
 app = Flask(__name__)
 CORS(app)
@@ -661,6 +662,13 @@ def chat():
             .message
             .content
         )
+
+        response_text = re.sub(
+            r"<think>.*?</think>",
+            "",
+            response_text,
+            flags=re.DOTALL
+        ).strip()
 
         if not response_text:
             response_text = (
