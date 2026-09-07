@@ -5,6 +5,7 @@ import sqlite3
 import os
 from datetime import datetime
 import re
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -667,11 +668,19 @@ def chat():
         # CONSULTAR GROQ
         # =====================================
 
+        inicio_modelo = time.time()
+
         completion = client.chat.completions.create(
             model=model_id,
             messages=messages,
             max_tokens=1000,
             temperature=0.3
+        )
+
+        tiempo_modelo = time.time() - inicio_modelo
+
+        print(
+            f"Tiempo del modelo: {tiempo_modelo:.2f} segundos"
         )
 
         response_text = (
