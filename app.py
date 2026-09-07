@@ -733,6 +733,30 @@ def chat():
             flags=re.IGNORECASE
         )
 
+        # Eliminar razonamiento expuesto como texto normal
+        reasoning_markers = [
+            "Here's a thinking process",
+            "Here is a thinking process",
+            "Thinking process:",
+            "Analyze the User's Request:",
+            "Analyze the user's request:",
+            "Context:",
+            "Persona:",
+            "Determine the Content:",
+            "Draft 1:",
+            "Draft 2:",
+            "Final Polish",
+            "Final Review",
+            "Internal Monologue",
+            "Self-Correction during generation:"
+        ]
+
+        for marker in reasoning_markers:
+            if marker.lower() in response_text.lower():
+                pos = response_text.lower().find(marker.lower())
+                response_text = response_text[:pos].strip()
+                break
+
         response_text = response_text.strip()
 
         if not response_text:
