@@ -6,6 +6,7 @@ import sqlite3
 import os
 from datetime import datetime
 import re
+from openai import OpenAI
 import time
 
 app = Flask(__name__)
@@ -26,6 +27,11 @@ HF_TOKEN = os.environ.get("HF_TOKEN")
 
 hf_client = InferenceClient(
     provider="fireworks-ai",
+    api_key=HF_TOKEN
+)
+
+kimi_client = OpenAI(
+    base_url="https://router.huggingface.co/v1",
     api_key=HF_TOKEN
 )
 
@@ -660,7 +666,7 @@ def chat():
 
         if model_key == "kimi":
 
-            completion = hf_client.chat.completions.create(
+            completion = kimi_client.chat.completions.create(
                 model=model_id,
                 messages=messages,
                 max_tokens=1000,
