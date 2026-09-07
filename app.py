@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
+from huggingface_hub import InferenceClient
 import sqlite3
 import os
 from datetime import datetime
@@ -21,6 +22,12 @@ client = Groq(
     api_key=GROQ_API_KEY
 )
 
+HF_TOKEN = os.environ.get("HF_TOKEN")
+
+hf_client = InferenceClient(
+    api_key=HF_TOKEN
+)
+
 MODELS = {
     "gpt-oss-20b": {
         "id": "openai/gpt-oss-20b",
@@ -33,6 +40,10 @@ MODELS = {
     "qwen": {
         "id": "qwen/qwen3.6-27b",
         "name": "🧠 Qwen 3.6 27B"
+    },
+    "gemma": {
+        "id": "TrevorJS/gemma-4-26B-A4B-it-uncensored",
+        "name": "🔥 Gemma 4 26B"
     }
 }
 
@@ -664,30 +675,48 @@ def chat():
             "================================="
         )
 
-        # =====================================
-        # CONSULTAR GROQ
+                # =====================================
+        # CONSULTAR MODELO
         # =====================================
 
         inicio_modelo = time.time()
 
-        completion = client.chat.completions.create(
-            model=model_id,
-            messages=messages,
-            max_tokens=1000,
-            temperature=0.3
-        )
+        if model_key == "gemma":
+
+            completion = hf_client.chat.completions.create(
+                model=model_id,
+                messages=messages,
+                max_tokens=1000,
+                temperature=0.3
+            )
+
+            response_text = (
+                completion
+                .choices[0]
+                .message
+                .content
+            )
+
+        else:
+
+            completion = client.chat.completions.create(
+                model=model_id,
+                messages=messages,
+                max_tokens=1000,
+                temperature=0.3
+            )
+
+            response_text = (
+                completion
+                .choices[0]
+                .message
+                .content
+            )
 
         tiempo_modelo = time.time() - inicio_modelo
 
         print(
             f"Tiempo del modelo: {tiempo_modelo:.2f} segundos"
-        )
-
-        response_text = (
-            completion
-            .choices[0]
-            .message
-            .content
         )
 
         # ==========================================
