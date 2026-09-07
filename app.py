@@ -25,6 +25,7 @@ client = Groq(
 HF_TOKEN = os.environ.get("HF_TOKEN")
 
 hf_client = InferenceClient(
+    provider="fireworks-ai",
     api_key=HF_TOKEN
 )
 
@@ -33,17 +34,13 @@ MODELS = {
         "id": "openai/gpt-oss-20b",
         "name": "🤖 GPT-OSS 20B"
     },
-    "llama": {
-        "id": "llama-3.1-8b-instant",
-        "name": "🦙 Llama 3.1 8B"
-    },
     "qwen": {
         "id": "qwen/qwen3.6-27b",
         "name": "🧠 Qwen 3.6 27B"
     },
-    "gemma": {
-        "id": "TrevorJS/gemma-4-26B-A4B-it-uncensored",
-        "name": "🔥 Gemma 4 26B"
+    "kimi": {
+        "id": "moonshotai/Kimi-K3:fireworks-ai",
+        "name": "🌙 Kimi K3"
     }
 }
 
@@ -661,7 +658,7 @@ def chat():
 
         inicio_modelo = time.time()
 
-        if model_key == "gemma":
+        if model_key == "kimi":
 
             completion = hf_client.chat.completions.create(
                 model=model_id,
