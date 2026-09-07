@@ -685,6 +685,7 @@ def chat():
         # LIMPIAR RAZONAMIENTO DEL MODELO
         # ==========================================
 
+        # Eliminar bloques completos de razonamiento
         response_text = re.sub(
             r"<think>.*?</think>",
             "",
@@ -706,12 +707,30 @@ def chat():
             flags=re.DOTALL | re.IGNORECASE
         )
 
+        # Eliminar etiquetas de razonamiento aunque estén solas
+        response_text = re.sub(
+            r"</?(think|analysis|reasoning)>",
+            "",
+            response_text,
+            flags=re.IGNORECASE
+        )
+
+        # Si el modelo empieza a mostrar razonamiento
+        # sin cerrar la etiqueta, eliminar todo desde esa etiqueta.
+        response_text = re.sub(
+            r"<(think|analysis|reasoning)>[\s\S]*$",
+            "",
+            response_text,
+            flags=re.IGNORECASE
+        )
+
         response_text = response_text.strip()
 
         if not response_text:
             response_text = (
-                "El modelo no devolvió texto."
-            )
+                "No pude generar una respuesta. "
+                "Inténtalo nuevamente."
+        )
 
         # =====================================
         # GUARDAR RESPUESTA
