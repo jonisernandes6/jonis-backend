@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from groq import Groq
 from huggingface_hub import InferenceClient
@@ -441,6 +441,76 @@ def delete_conversation(conversation_id):
             "error": "No se pudo eliminar la conversación",
             "details": str(e)
         }), 500
+
+@app.route("/chat-stream-test", methods=["POST"])
+def chat_stream_test():
+
+    try:
+
+        data = request.get_json(silent=True) or {}
+
+        message = str(
+            data.get("message", "")
+        ).strip()
+
+        if not message:
+            return jsonify({
+                "error": "Debes escribir un mensaje"
+            }), 400
+
+        completion = openrouter_client.chat.completions.create(
+
+            model=MODELS["nemotron"]["id"],
+
+            messages=[
+                {
+                    "role": "system",
+                    "content": SYSTEM_MESSAGE
+                },
+                {
+                    "role": "user",
+                    "content": message
+                }
+            ],
+
+            max_tokens=2000,
+            temperature=0.5,
+            stream=True
+        )
+
+        def generate():
+
+            for chunk in completion:
+
+                if not chunk.choices:
+                    continue
+
+                delta = chunk.choices[0].delta
+
+                if not delta:
+                    continue
+
+                text = delta.content
+
+                if text:
+                    yield text
+
+        return Response(
+            generate(),
+            mimetype="text/plain"
+        )
+
+    except Exception as e:
+
+        print(
+            "ERROR STREAM:",
+            repr(e)
+        )
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
@@ -661,8 +731,8 @@ def chat():
             completion = openrouter_client.chat.completions.create(
                 model=model_id,
                 messages=messages,
-                max_tokens=1000,
-                temperature=0.9
+                max_tokens=2000,
+                temperature=0.8
             )
 
         else:
