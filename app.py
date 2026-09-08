@@ -746,7 +746,7 @@ def chat():
             completion = openrouter_client.chat.completions.create(
                 model=model_id,
                 messages=messages,
-                max_tokens=2000,
+                max_tokens=8000,
                 temperature=0.8
             )
 
@@ -755,7 +755,7 @@ def chat():
             completion = client.chat.completions.create(
                 model=model_id,
                 messages=messages,
-                max_tokens=2000,
+                max_tokens=8000,
                 temperature=0.3
             )
 
