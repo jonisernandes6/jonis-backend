@@ -30,9 +30,9 @@ hf_client = InferenceClient(
     api_key=HF_TOKEN
 )
 
-kimi_client = OpenAI(
-    base_url="https://router.huggingface.co/v1",
-    api_key=HF_TOKEN
+openrouter_client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.environ.get("OPENROUTER_API_KEY")
 )
 
 MODELS = {
@@ -44,9 +44,9 @@ MODELS = {
         "id": "qwen/qwen3.6-27b",
         "name": "🧠 Qwen 3.6 27B"
     },
-    "kimi": {
-        "id": "moonshotai/Kimi-K3:fireworks-ai",
-        "name": "🌙 Kimi K3"
+    "nemotron": {
+        "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "name": "🦾 Nemotron 3 Ultra"
     }
 }
 
@@ -656,9 +656,9 @@ def chat():
 
         inicio_modelo = time.time()
 
-        if model_key == "kimi":
+        if model_key == "nemotron":
 
-            completion = kimi_client.chat.completions.create(
+            completion = openrouter_client.chat.completions.create(
                 model=model_id,
                 messages=messages,
                 max_tokens=1000,
