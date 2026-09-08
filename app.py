@@ -480,24 +480,39 @@ def chat_stream_test():
 
         def generate():
 
-            for chunk in completion:
+            try:
 
-                if not chunk.choices:
-                    continue
+                for chunk in completion:
 
-                delta = chunk.choices[0].delta
+                    if not chunk.choices:
+                        continue
 
-                if not delta:
-                    continue
+                    delta = chunk.choices[0].delta
 
-                text = delta.content
+                    if not delta:
+                        continue
 
-                if text:
-                    yield text
+                    text = delta.content
+
+                    if text:
+                        yield text
+
+            except Exception as stream_error:
+
+                print(
+                    "ERROR DURANTE STREAM:",
+                    repr(stream_error)
+                )
+
+                return
 
         return Response(
             generate(),
-            mimetype="text/plain"
+            mimetype="text/plain",
+            headers={
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no"
+            }
         )
 
     except Exception as e:
