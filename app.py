@@ -764,10 +764,24 @@ def chat():
         # =====================================
 
         response_text = None
+        finish_reason = None
 
         if completion and completion.choices:
 
-            message = completion.choices[0].message
+            choice = completion.choices[0]
+
+            finish_reason = getattr(
+                choice,
+                "finish_reason",
+                None
+            )
+
+            print(
+                "Finish reason:",
+                finish_reason
+            )
+
+            message = choice.message
 
             if message:
                 response_text = message.content
