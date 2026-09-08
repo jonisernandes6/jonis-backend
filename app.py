@@ -650,11 +650,11 @@ def chat():
             "================================="
         )
 
-                # =====================================
+        inicio_modelo = time.time()
+
+        # =====================================
         # CONSULTAR MODELO
         # =====================================
-
-        inicio_modelo = time.time()
 
         if model_key == "nemotron":
 
@@ -663,13 +663,6 @@ def chat():
                 messages=messages,
                 max_tokens=1000,
                 temperature=0.9
-            )
-
-            response_text = (
-                completion
-                .choices[0]
-                .message
-                .content
             )
 
         else:
@@ -681,11 +674,23 @@ def chat():
                 temperature=0.3
             )
 
-            response_text = (
-                completion
-                .choices[0]
-                .message
-                .content
+        # =====================================
+        # OBTENER RESPUESTA DE FORMA SEGURA
+        # =====================================
+
+        response_text = None
+
+        if completion and completion.choices:
+
+            message = completion.choices[0].message
+
+            if message:
+                response_text = message.content
+
+        if not response_text:
+
+            raise RuntimeError(
+                "El modelo no devolvió contenido en la respuesta"
             )
 
         tiempo_modelo = time.time() - inicio_modelo
