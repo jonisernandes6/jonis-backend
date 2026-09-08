@@ -792,6 +792,70 @@ def chat():
                 "El modelo no devolvió contenido en la respuesta"
             )
 
+        # ==========================================
+        # CONTINUACIÓN AUTOMÁTICA
+        # ==========================================
+
+        if finish_reason == "length":
+
+            print("Respuesta llegó al límite. Solicitando continuación...")
+
+            continuation_messages = messages + [
+                {
+                    "role": "assistant",
+                    "content": response_text
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        "Continúa exactamente desde donde terminaste. "
+                        "No repitas lo anterior. Completa la respuesta "
+                        "hasta terminarla."
+                    )
+                }
+            ]
+
+            if model_key == "nemotron":
+
+                continuation = openrouter_client.chat.completions.create(
+                    model=model_id,
+                    messages=continuation_messages,
+                    max_tokens=2000,
+                    temperature=0.8
+                )
+
+            else:
+
+                continuation = client.chat.completions.create(
+                    model=model_id,
+                    messages=continuation_messages,
+                    max_tokens=2000,
+                    temperature=0.3
+                )
+
+            if continuation and continuation.choices:
+
+                continuation_choice = continuation.choices[0]
+
+                continuation_text = (
+                    continuation_choice.message.content
+                    if continuation_choice.message
+                    else ""
+                )
+
+                print(
+                    "Finish reason continuación:",
+                    getattr(
+                        continuation_choice,
+                        "finish_reason",
+                        None
+                    )
+                )
+
+                if continuation_text:
+
+                    response_text += "\n\n" + continuation_text
+
         tiempo_modelo = time.time() - inicio_modelo
 
         print(
