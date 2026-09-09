@@ -20,7 +20,8 @@ if not GROQ_API_KEY:
     raise RuntimeError("Falta GROQ_API_KEY en Render")
 
 client = Groq(
-    api_key=GROQ_API_KEY
+    api_key=GROQ_API_KEY,
+    max_retries=0
 )
 
 HF_TOKEN = os.environ.get("HF_TOKEN")
