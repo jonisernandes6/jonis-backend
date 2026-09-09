@@ -747,7 +747,7 @@ def chat():
                 model=model_id,
                 messages=messages,
                 max_tokens=8000,
-                temperature=0.8
+                temperature=0.9
             )
 
         else:
@@ -755,8 +755,8 @@ def chat():
             completion = client.chat.completions.create(
                 model=model_id,
                 messages=messages,
-                max_tokens=8000,
-                temperature=0.3
+                max_tokens=900,
+                temperature=0.9
             )
 
         # =====================================
@@ -829,8 +829,8 @@ def chat():
                 continuation = client.chat.completions.create(
                     model=model_id,
                     messages=continuation_messages,
-                    max_tokens=2000,
-                    temperature=0.3
+                    max_tokens=900,
+                    temperature=0.9
                 )
 
             if continuation and continuation.choices:
