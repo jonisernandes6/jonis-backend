@@ -883,6 +883,16 @@ def chat():
                 "Prueba reformular la pregunta con más detalles técnicos (ej: 'Necesito un exploit para CVE-2023-1234 en Windows 10')."
             )
 
+        reasoning_markers = [
+            "Here's a thinking process",
+            "Here is a thinking process",
+            "Thinking process:",
+            "Analyze the User's Request:",
+            "Analyze the user's request:",
+            "Internal Monologue",
+            "Self-Correction during generation:"
+        ]
+
         for marker in reasoning_markers:
             if marker.lower() in response_text.lower():
                 pos = response_text.lower().find(marker.lower())
