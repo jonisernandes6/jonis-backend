@@ -49,10 +49,10 @@ MODELS = {
         "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
         "name": "🦾 Nemotron 3 Ultra"
     },
-    "venice": {
-        "id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
-        "name": "🐬 Venice Uncensored"
-    }
+    "free": {
+        "id": "openrouter/free",
+        "name": "🆓 Auto Gratis"
+    },
 }
 
 DEFAULT_MODEL = "nemotron"
