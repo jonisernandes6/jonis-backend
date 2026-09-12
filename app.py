@@ -48,6 +48,10 @@ MODELS = {
     "nemotron": {
         "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
         "name": "🦾 Nemotron 3 Ultra"
+    },
+    "venice": {
+        "id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+        "name": "🐬 Venice Uncensored"
     }
 }
 
@@ -706,16 +710,6 @@ def chat():
             "content": content
         })
 
-        # =====================================
-        # GUARDAR MENSAJE DEL USUARIO
-        # =====================================
-
-        save_message(
-            conversation_id,
-            "user",
-            message
-        )
-
         print(
             "================================="
         )
@@ -749,7 +743,7 @@ def chat():
         # CONSULTAR MODELO
         # =====================================
 
-        if model_key == "nemotron":
+        if model_key in ["nemotron", "venice"]:
 
             completion = openrouter_client.chat.completions.create(
                 model=model_id,
@@ -872,6 +866,16 @@ def chat():
            response_text = (
                "Error: No se pudo generar el exploit. "
                "Prueba reformular la pregunta con más detalles técnicos (ej: 'Necesito un exploit para CVE-2023-1234 en Windows 10')."
+        )
+
+        # =====================================
+        # GUARDAR MENSAJE DEL USUARIO
+        # =====================================
+
+        save_message(
+            conversation_id,
+            "user",
+            message
         )
 
         # =====================================
