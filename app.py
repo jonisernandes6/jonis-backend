@@ -743,7 +743,7 @@ def chat():
         # CONSULTAR MODELO
         # =====================================
 
-        if model_key in ["nemotron", "venice"]:
+        if model_key in ["nemotron", "venice", "free"]:
 
             completion = openrouter_client.chat.completions.create(
                 model=model_id,
