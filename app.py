@@ -783,10 +783,19 @@ def chat():
                 finish_reason
             )
 
-            message = choice.message
+            message_obj = choice.message
 
-            if message:
-                response_text = message.content
+            if message_obj:
+                response_text = getattr(
+                    message_obj,
+                    "content",
+                    None
+                )
+
+                if response_text is not None:
+                    response_text = str(
+                        response_text
+                    )
 
         if not response_text:
 
