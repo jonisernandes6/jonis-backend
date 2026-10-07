@@ -53,13 +53,17 @@ async def precios(update: Update, context: ContextTypes.DEFAULT_TYPE):
     texto = (
         "💰 *PRECIOS DE JONISAI*\n\n"
         "🪙 *100 tokens*\n"
-        "C$50  •  US$1.36\n\n"
+        "🇳🇮 50 NIO\n"
+        "🇺🇸 1.36 USD\n\n"
         "🪙 *500 tokens*\n"
-        "C$200  •  US$5.44\n\n"
+        "🇳🇮 200 NIO\n"
+        "🇺🇸 5.44 USD\n\n"
         "🪙 *1,000 tokens*\n"
-        "C$350  •  US$9.52\n\n"
+        "🇳🇮 350 NIO\n"
+        "🇺🇸 9.52 USD\n\n"
         "🪙 *5,000 tokens*\n"
-        "C$1,500  •  US$40.80\n\n"
+        "🇳🇮 1,500 NIO\n"
+        "🇺🇸 40.80 USD\n\n"
         "✨ Los tokens se utilizan para utilizar JonisAI."
     )
 
