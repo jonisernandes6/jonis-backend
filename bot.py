@@ -110,13 +110,22 @@ async def ia(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "💻 Programación\n"
         "❓ Preguntas y respuestas\n"
         "📚 Aprendizaje\n\n"
-        "🚀 Muy pronto podrás utilizar JonisAI "
-        "directamente desde Telegram."
+        "🚀 Abre JonisAI y comienza a utilizarlo."
     )
 
     teclado = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🛒 Comprar tokens", callback_data="comprar")],
-        [InlineKeyboardButton("⬅️ Volver al menú", callback_data="menu")],
+        [
+            InlineKeyboardButton(
+                "🚀 Abrir JonisAI",
+                url="https://huggingface.co/spaces/jonisrejion89/jonis-IA-gpt"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "⬅️ Volver al menú",
+                callback_data="menu"
+            )
+        ],
     ])
 
     await update.callback_query.edit_message_text(
