@@ -1477,12 +1477,12 @@ def ultra_paypal_create_order():
                 "brand_name": "JonisAI",
                 "user_action": "PAY_NOW",
                 "return_url": (
-                    request.host_url.rstrip("/")
-                    + "/?paypal=success"
+                    "https://jonisrejion89-jonis-ia-gpt.static.hf.space"
+                    + "?paypal=success"
                 ),
                 "cancel_url": (
-                    request.host_url.rstrip("/")
-                    + "/?paypal=cancel"
+                    "https://jonisrejion89-jonis-ia-gpt.static.hf.space"
+                    + "?paypal=cancel"
                 )
             }
         }
