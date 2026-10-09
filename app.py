@@ -894,6 +894,55 @@ def consume_token(device_id, access_id):
     finally:
         conn.close()
 
+
+def refund_token(device_id, access_id):
+    if not device_id or not access_id:
+        return False
+
+    conn = get_db()
+
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+
+        account = conn.execute("""
+            SELECT id
+            FROM accounts
+            WHERE device_id = ?
+              AND access_id = ?
+              AND active = 1
+        """, (device_id, access_id)).fetchone()
+
+        if not account:
+            conn.rollback()
+            return False
+
+        conn.execute("""
+            UPDATE accounts
+            SET tokens = tokens + 1
+            WHERE id = ?
+        """, (account["id"],))
+
+        conn.execute("""
+            INSERT INTO token_transactions
+            (account_id, amount, reason, created_at)
+            VALUES (?, ?, ?, ?)
+        """, (
+            account["id"],
+            1,
+            "chat_refund",
+            datetime.now(timezone.utc).isoformat()
+        ))
+
+        conn.commit()
+        return True
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        conn.close()
+
 @app.route("/api/health", methods=["GET"])
 def ultra_health():
     return jsonify(
@@ -1846,6 +1895,8 @@ def ultra_paypal_capture_order():
 
 @app.route("/chat", methods=["POST"])
 def chat():
+    token_consumed = False
+
     try:
         data = request.get_json(silent=True)
 
@@ -2026,6 +2077,8 @@ def chat():
             return jsonify({
                 "error": token_result
             }), 402
+
+        token_consumed = True
 
         messages.append({
             "role": "user",
@@ -2277,6 +2330,16 @@ def chat():
             "ERROR EN /chat:",
             repr(e)
         )
+
+        if token_consumed:
+            try:
+                refunded = refund_token(device_id, access_id)
+                if refunded:
+                    print("Token devuelto tras error en /chat")
+                else:
+                    print("No se pudo devolver el token: cuenta no encontrada")
+            except Exception as refund_error:
+                print("ERROR AL DEVOLVER TOKEN:", repr(refund_error))
 
         error_text = str(e)
 
