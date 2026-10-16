@@ -65,7 +65,7 @@ def chat():
             data = response.json()
             reply = data['choices'][0]['message']['content']
         else:
-            reply = f"ERROR EN EL SISTEMA OSCURO. Código: {response.status_code}. Respuesta: {response.text[:200]}"
+            reply = f"ERROR EN EL SISTEMA OSCURO. Código: {response.status_code}."
             
         return jsonify({
             "response": reply,
